@@ -1,0 +1,180 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+	 //linked list for shuffle
+typedef struct node
+{
+	int num;
+	struct node *next;
+}NODE;
+ NODE*head;//golobal variable
+ NODE*ans;
+ NODE* front;
+ NODE* rear;
+ NODE*top;
+NODE *get_node(void)
+{
+	NODE *link;//產生一個link pointer to node
+	link = (NODE*)malloc(sizeof(NODE));//(同樣指向node的pointer)產生node
+	if (link == NULL)
+	{
+		printf("memory_leak");
+		//exit(1);
+	}
+	return(link);
+}
+NODE* Enquene(int data, NODE* front, NODE* rear) 
+{
+	NODE* temp = get_node();
+
+	temp->num = data;
+	temp->next = NULL;
+	if (front == NULL && rear == NULL)
+	{
+		front = rear = temp;
+		return(rear);
+	}
+	rear->next = temp;
+	rear = temp;
+	return(rear);
+}
+NODE* Dequene(NODE* front, NODE* rear) 
+{
+	struct Node* temp = front;
+	if (front == NULL)
+	{
+		printf("Queue is Empty\n");
+		return;
+	}
+	if (front == rear)
+	{
+		front = rear = NULL;
+		return(front);
+	}
+	else
+	{
+		front = front->next;
+		return(front);
+	}
+	free(temp);
+}
+int quene_save(NODE* p)
+{
+	int i;
+	i = p->num;
+	return(i);
+}
+int Front(NODE* front) {
+	if (front == NULL) {
+		printf("Queue is empty\n");
+		return;
+	}
+	return (front->num);
+}
+
+int  BFS(int *(ptr),int i, int k )
+{
+	int p;
+	int q;
+	struct node_pointer {
+		NODE *rear;
+		NODE *front;
+	}nodewanted, *segementation_pointer,*boundary_detect,boundary;
+	segementation_pointer = &nodewanted;
+	boundary_detect = &boundary;
+	boundary_detect->rear = boundary_detect->front = Enquene(i*N+k,front, rear); //位置
+	segementation_pointer->rear= segementation_pointer->front= Enquene(*(ptr +i*N+k ),front,rear);//數值
+	printf("begin_point :   ");
+	printf("%d x  ", i); //起始位置
+	printf("%d y\n", k);
+	// for recursive 
+	boundary_detect->rear=BFS_recursive(ptr, i,k, segementation_pointer->front, segementation_pointer->rear,boundary_detect->front,boundary_detect->rear);
+	p = length(boundary_detect->front);
+	printf("\n segementation :     ");
+	printf("%d\n", (p+1));
+	return(0);
+}
+int BFS_recursive(int *(ptr), int i, int k, NODE* front, NODE* rear, NODE* top, NODE*ans)
+//點帶入之後疊代bfsadd quene return 0 // quene 同時記錄i k  
+{
+	int o, p;
+	if (i<0 || i>N || k<0 || k>N)
+	{
+		return;	
+	}
+	else {//右左上下
+		if (*(ptr + i*N + k + 1) == 1)//右 
+		{
+			rear = Enquene(*(ptr + i*N + k + 1), front, rear);
+			*(ptr + i*N + k + 1) = 0;
+			if (top == NULL)
+			{
+				top = ans = Enquene(i*N + k + 1, top, ans);
+			}
+			else
+			{
+				ans = Enquene(i*N + k + 1, top, ans);
+			}
+			BFS_recursive(ptr, i, k, front, rear, top, ans);
+		}
+		else if (*(ptr + i*N + k - 1) == 1 )//左
+		{
+			rear = Enquene(*(ptr + i*N + k - 1), front, rear);
+			*(ptr + i*N + k - 1) = 0;
+			if (top == NULL)
+			{
+				top = ans = Enquene(i*N + k - 1, top, ans);
+			}
+			else
+			{
+				ans = Enquene(i*N + k - 1, top, ans);
+			}
+			BFS_recursive(ptr, i, k, front, rear, top, ans);
+		}
+		else if (*(ptr + (i + 1)*N + k) == 1 )//下
+		{
+			rear = Enquene(*(ptr + (i + 1)*N + k), front, rear);
+			*(ptr + (i + 1)*N + k) = 0;
+			if (top == NULL)
+			{
+				top = ans = Enquene((i + 1)*N + k, top, ans);
+			}
+			else
+			{
+				ans = Enquene((i + 1)*N + k, top, ans);
+			}
+			BFS_recursive(ptr, i, k, front, rear, top, ans);
+		}
+		else if (*(ptr + (i - 1)*N + k) == 1) //&& i > 0 && i < N && k>0 && k < N)//上
+		{
+			rear = Enquene(*(ptr + (i - 1)*N + k), front, rear);
+			*(ptr + (i - 1)*N + k) = 0;
+			if (top == NULL)
+			{
+				top = ans = Enquene((i - 1)*N + k, top, ans);
+			}
+			else
+			{
+				ans = Enquene((i - 1)*N + k, top, ans);
+			}
+			BFS_recursive(ptr, i, k, front, rear, top, ans);
+		}
+		else
+		{
+			if (top == NULL)
+			{
+				print(front);
+				return(front);
+			}
+			else
+			{
+				*(ptr + i*N + k) = 0;
+				i = (quene_save(top)) / N;
+				k = (quene_save(top)) % N;
+				top = Dequene(top, ans);
+				BFS_recursive(ptr, i, k, front, rear, top, ans);
+			}
+		}
+	}
+	return(0);
+}
